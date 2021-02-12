@@ -41,7 +41,7 @@ stage('SonarQube') {
     sh 'mvn sonar:sonar'
   }
 }
-cstage('Build Management') {
+stage('Build Management') {
    def uploadSpec = """{ 
      "files": [
        {
