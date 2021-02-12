@@ -1,6 +1,6 @@
 node{
 def mvn_home
-
+mvn_home=tool "mvn"
 
 dir('01-Jenkins/petclinic-code') {
 
