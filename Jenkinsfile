@@ -1,60 +1,84 @@
-node{
-def mvn_home
-mvn_home=tool "mvn"
+node ('master'){
+// Get Artifactory Server Instance Details
+  def server = Artifactory.server "01"
+  def buildInfo = Artifactory.newBuildInfo()
+   
 
-dir('01-Jenkins/petclinic-code') {
+// Project Variables
+  def project_path = "petclinic-code"
 
- 
+notify('Started')
+
+try {
+
+stage('Git-CheckOut') {
+  git branch: 'preprod', url: 'https://github.com/sathishiyer/DevOPS-Mindtree-301-CS.git'
+}
+
+
+dir(project_path) {
 
 stage('Maven-Clean') {
-    withEnv(["MVN_HOME=$mvn_home"])
-    {
-        sh '"$MVN_HOME/bin/mvn" clean'
-    }
+    sh 'mvn clean'
 }
-
- 
 
 stage('Maven-Compile') {
-    withEnv(["MVN_HOME=$mvn_home"])
-    {
-        sh '"$MVN_HOME/bin/mvn" compile'
-    }
+sh 'mvn compile'
 }
-
- 
 
 stage('Maven-Test') {
-    withEnv(["MVN_HOME=$mvn_home"])
-    {
-        sh '"$MVN_HOME/bin/mvn" test'
-    }
+sh 'mvn test'
 }
-
- 
 
 stage('Maven-Package') {
-    withEnv(["MVN_HOME=$mvn_home"])
-    {
-        sh '"$MVN_HOME/bin/mvn" package'
-    }
+sh 'mvn package'
 }
 
- 
+stage('SonarQube') {
+  withSonarQubeEnv('Sonar') {
+    sh 'mvn sonar:sonar'
+  }
+}
 
-stage('Deployment - PreProd') {
+stage('Build Management') {
+   def uploadSpec = """{ 
+     "files": [
+       {
+        "pattern": "**/*.war",
+         "target": "petclinic-war"
+       }
+      ]
+   }"""
+   server.upload spec: uploadSpec
+}
+
+stage('Publish Build Info'){
+  server.publishBuildInfo buildInfo
+}
+
+
+stage('Archive-Artifacts') {
+archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+}
+
+
+stage('PreProd Deployment - Docker') {
 sh 'docker-compose up -d --build'
 }
 
-
-}
+} 
  notify('Completed')
-}
+} catch(err){
+  notify("Error ${err}")
+  currentBuild.result = 'FAILURE'
 
+ }
+
+}
 
 def notify(status){
     emailext( 
-      to: "Sathish Sambamurthy",
+      to: "sathish.sambamurthy@mindtree.com",
       subject: "${status}: JOB '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """<p>${status}: JOB '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
                <p> Check the Console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME}[${env.BUILD_NUMBER}]</a></p>""",
