@@ -1,4 +1,4 @@
-node ('linux-worker'){
+node ('worker1'){
 // Get Artifactory Server Instance Details
   def server = Artifactory.server "01"
   def buildInfo = Artifactory.newBuildInfo()
@@ -12,7 +12,7 @@ notify('Started')
 try {
 
 stage('Git-CheckOut') {
-  git branch: 'production', url: 'https://github.com/amitvashisttech/devops301-mindtree-27-Jan-2021.git'
+  git branch: 'production', url: 'https://github.com/DevOPS-Mindtree-301-CS/production.git'
 }
 
 stage('Download Package') {
@@ -49,7 +49,7 @@ stage('Petclinic Ansible Deployment-Prod') {
 
 def notify(status){
     emailext( 
-      to: "amitvashist7@outlook.com",
+      to: "sathishiyer@gmail.com",
       subject: "${status}: JOB '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """<p>${status}: JOB '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
                <p> Check the Console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME}[${env.BUILD_NUMBER}]</a></p>""",
