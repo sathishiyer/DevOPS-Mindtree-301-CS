@@ -2,7 +2,7 @@ resource "aws_instance" "backend" {
   ami               = "ami-0ebc8f6f580a04647"
   instance_type     = "t2.micro"
 #  availability_zone = data.aws_availability_zones.zone_east.names[count.index]
-#  count             = 1
+  count             = 2
   key_name          = var.key_name
   vpc_security_group_ids = [var.sg_id]
   lifecycle {
@@ -37,8 +37,8 @@ resource "null_resource" "ansible-main" {
        > jenkins-ci.ini;
        echo "[tomcat]"|tee -a jenkins-ci.ini;
        export ANSIBLE_HOST_KEY_CHECKING=False;
-       echo "${aws_instance.backend.public_ip}"|tee -a jenkins-ci.ini;
-       echo "${aws_instance.backend.public_ip}"|tee -a jenkins-ci.ini;
+       echo "${aws_instance.backend[0].public_ip}"|tee -a jenkins-ci.ini;
+       echo "${aws_instance.backend[1].public_ip}"|tee -a jenkins-ci.ini;
        ansible-playbook --key-file=${var.pvt_key_name} -i jenkins-ci.ini -u ubuntu ./ansible-code/petclinic.yaml -v 
      EOT
   }
