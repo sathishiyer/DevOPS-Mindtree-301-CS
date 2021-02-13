@@ -1,4 +1,4 @@
-node ('worker1'){
+node ('master'){
 // Get Artifactory Server Instance Details
   def server = Artifactory.server "01"
   def buildInfo = Artifactory.newBuildInfo()
@@ -23,7 +23,6 @@ stage('Download Package') {
          "target": "ansible-code/roles/petclinic/files/"
        }
       ]
-
    }"""
    server.download spec: downloadSpec
 }
