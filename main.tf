@@ -44,7 +44,7 @@ resource "null_resource" "ansible-main" {
        export ANSIBLE_HOST_KEY_CHECKING=False;
        echo "${aws_instance.backend[0].public_ip}"|tee -a jenkins-ci.ini;
        echo "${aws_instance.backend[1].public_ip}"|tee -a jenkins-ci.ini;
-       ansible-playbook -i jenkins-ci.ini -u ubuntu ./ansible-code/petclinic.yaml --private-key ${var.pvt_key_name} -v 
+       ansible-playbook -i jenkins-ci.ini ./ansible-code/petclinic.yaml -u ubuntu --private-key ${var.pvt_key_name} -v 
      EOT
   }
   depends_on = [aws_instance.backend]
