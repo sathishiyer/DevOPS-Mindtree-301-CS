@@ -12,7 +12,7 @@ notify('Started')
 try {
 
 stage('Git-CheckOut') {
-  git branch: 'production', url: 'https://github.com/DevOPS-Mindtree-301-CS/production.git'
+  git branch: 'production', url: 'https://github.com/DevOPS-Mindtree-301-CS.git'
 }
 
 stage('Download Package') {
