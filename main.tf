@@ -1,5 +1,5 @@
 resource "aws_instance" "backend" {
-  ami               = "ami-0ebc8f6f580a04647"
+  ami               = "ami-073c8c0760395aab8"
   instance_type     = "t2.micro"
 #  availability_zone = data.aws_availability_zones.zone_east.names[count.index]
   count             = 2
