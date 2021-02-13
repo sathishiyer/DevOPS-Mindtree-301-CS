@@ -1,6 +1,6 @@
 ---
 
-- hosts: all
+- hosts: tomcat
   name: "Petclinic Deployment"
   become: yes
   roles:
